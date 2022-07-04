@@ -1,68 +1,49 @@
-import { Component, OnInit } from "@angular/core";
-import { __importDefault } from "tslib";
-import { IProduct } from "./product";
+import { Component, OnInit } from '@angular/core';
+import { IProduct } from './product';
+import { ProductService } from './product.service';
 
 @Component({
-    selector: 'pm-products',
-    templateUrl: './product-list.component.html',
-    styleUrls: ['./product-list.component.css'],
+  selector: 'pm-products',
+  templateUrl: './product-list.component.html',
+  styleUrls: ['./product-list.component.css']
 })
+export class ProductListComponent implements OnInit {
+  pageTitle: string = 'Product List';
+  imageWidth: number = 50;
+  imageMargin: number = 2;
+  showImage: boolean = false;
 
-export class ProductListComponent implements OnInit{
-    pageTitle: string = "Product List";
-    imageWidth: number = 50;
-    imageMargin: number = 2;
-    showImage: boolean = false;
-    
-    private _listFilter: string = "";
-    get listFilter(): string{
-        return this._listFilter;
-    }
-    set listFilter(value: string){
-        this._listFilter = value;
-        console.log("In setter: ", value);
-        this.filteredProduct = this.performFilter(value);
-    }
+  private _listFilter: string = '';
+  get listFilter(): string {
+    return this._listFilter;
+  }
+  set listFilter(value: string) {
+    this._listFilter = value;
+    console.log('In setter:', value);
+    this.filteredProducts = this.performFilter(value);
+  }
 
-    filteredProduct: IProduct[] = [];
-    products: IProduct[]= [
-        {
-            "productId": 2,
-            "productName": "Hammer",
-            "productCode": "GDN-0023",
-            "releaseDate": "March 18, 2021",
-            "description": "15 gallon Capacity",
-            "price": 32.99,
-            "starRating": 4.2,
-            "imageUrl": "https://rukminim2.flixcart.com/image/416/416/k4px6kw0/hammer/w/3/x/tubular-steel-handle-curved-claw-hammer-10-5-inch-vasundhara-original-imafnjznd3ghjfyd.jpeg?q=70"
-        },
-        {
-          "productId": 2,
-          "productName": "Garden Cart",
-          "productCode": "GDN-0023",
-          "releaseDate": "March 18, 2021",
-          "description": "15 gallon capacity rolling garden cart",
-          "price": 32.99,
-          "starRating": 4.2,
-          "imageUrl": "assets/images/garden_cart.png"
-        }
-    ];
+  filteredProducts: IProduct[] = [];
+  products: IProduct[] = [];
 
-    performFilter(filterBy: string): IProduct[]{
-        filterBy = filterBy.toLocaleLowerCase();
-        return this.products.filter((product: IProduct) =>
-            product.productName.toLocaleLowerCase().includes(filterBy));  
-    }
+  constructor(private productService: ProductService) {}
 
-    toggleImage(): void{
-        this.showImage = !this.showImage;
-    }
+  performFilter(filterBy: string): IProduct[] {
+    filterBy = filterBy.toLocaleLowerCase();
+    return this.products.filter((product: IProduct) =>
+      product.productName.toLocaleLowerCase().includes(filterBy));
+  }
 
-    ngOnInit(): void {
-        this.listFilter = "cart";
-    }
+  toggleImage(): void {
+    this.showImage = !this.showImage;
+  }
 
-    onRatingClicked(message: string): void{
-        this.pageTitle = "Product List: " + message;
-    }
+  ngOnInit(): void {
+    this.products = this.productService.getProducts();
+    this.filteredProducts = this.products;
+  }
+
+  onRatingClicked(message: string): void {
+    this.pageTitle = 'Product List: ' + message;
+  }
 }
